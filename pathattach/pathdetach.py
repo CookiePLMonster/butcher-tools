@@ -1,5 +1,5 @@
 import sys
-from parseipl import parseIpl
+from parseipl import parseIplInst
 
 def wxyzConjugate(q):
 	return q[0], -q[1], -q[2], -q[3]
@@ -19,7 +19,7 @@ with open(sys.argv[1]) as f:
 	curIdeModel = 0
 	curIdeName = ""
 
-	instlines = parseIpl( sys.argv[2:] )
+	instlines = parseIplInst( sys.argv[2:] )
 
 	for line in f:
 		line = line.strip()
@@ -32,27 +32,28 @@ with open(sys.argv[1]) as f:
 			tokens = line.split(", ")
 			if len(tokens) == 3:
 				if curIde:
-					for curData in instlines[ curIdeModel ]:
-						print curIdeType + ', -1 # ' + curIdeModel + ', ' + curIdeName
+					for inst in instlines[ curIdeModel ]:
+						print str(curIdeType) + ', -1 # ' + str(curIdeModel) + ', ' + curIdeName
 						for token in curIde:
 							out = ()
 							if int(token[0]) == 0:
 								out = (0, 0, 0)
 							else:
-								q = ( curData[7], -curData[4], -curData[5], -curData[6] )
+								q = ( inst.Rot[3], -inst.Rot[0], -inst.Rot[1], -inst.Rot[2] )
 								qc = wxyzConjugate(q)
 								p = [ 0.0, float(token[3]), float(token[4]), float(token[5]) ]
 
 								v = quatMultiply(quatMultiply(q, p), qc)
-								out = map(lambda x, y: int(x + y*16.0), v[1:], curData[1:4])
+								out = map(lambda x, y: int(x + y*16.0), v[1:], inst.Pos)
 
 							print '\t' + token[0] + ', ' + token[1] + ', ' + token[2] + ', ' + str(out[0])  + ', ' + str(out[1]) + ', ' + str(out[2]) + ', ' + token[6] + ', ' + token[7] + ', ' + token[8] + ', ' + token[9] + ', ' + token[10] + ', ' + token[11]
 
 				curIde = []
-				if tokens[1] in instlines:
+				modelId = int(tokens[1])
+				if modelId in instlines:
 					parseThisFile = True
-					curIdeType = tokens[0]
-					curIdeModel = tokens[1]
+					curIdeType = int(tokens[0])
+					curIdeModel = modelId
 					curIdeName = tokens[2]
 				else:
 					print >> sys.stderr, "Error! File " + tokens[2] + " not found in any parsed IPL!"
