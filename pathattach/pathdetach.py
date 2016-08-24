@@ -34,7 +34,7 @@ for id, path in paths.iteritems():
 		print >> sys.stderr, "Error! File " + path.ModelName + " not found in any parsed IPL!"
 		continue
 
-	for groupId, pathnodes in enumerate(path.NodesByGroup):
+	for groupId, pathnodes in reversed(list(enumerate(path.NodesByGroup))):
 		if pathnodes:
 			for instId, inst in enumerate(instlines[ path.ModelID ]):
 				if StripDebugInfo:
@@ -52,13 +52,13 @@ for id, path in paths.iteritems():
 					if node.NodeType == 0:
 						NewPos = (0, 0, 0)
 					else:
-						q = ( inst.Rot[3], -inst.Rot[0], -inst.Rot[1], -inst.Rot[2] )
+						q = ( inst.Rot[3], ) + tuple(inst.Rot[:3])
 						qc = wxyzConjugate(q)
 						p = ( 0.0, ) + node.Pos
 
 						v = quatMultiply(quatMultiply(q, p), qc)
-						NewPos = map(lambda x, y: int(x + y*16.0), v[1:], inst.Pos)
+						NewPos = map(lambda x, y: x + y*16.0, v[1:], inst.Pos)
 					print '\t' + str(node.NodeType) + ', ' + str(node.NextNode) + ', ' + str(node.IsCrossRoad) + ', ' + \
-					str(NewPos[0]) + ', ' + str(NewPos[1])  + ', ' + str(NewPos[2]) + ', ' + \
+					"{:g}".format(NewPos[0]) + ', ' + "{:g}".format(NewPos[1])  + ', ' + "{:g}".format(NewPos[2]) + ', ' + \
 					"{:g}".format(node.Median) + ', ' + str(node.LeftLanes) + ', ' + str(node.RightLanes) + ', ' + \
 					str(node.SpeedLimit) + ', ' + str(NewFlags) + ', ' + "{:g}".format(node.SpawnRate)
