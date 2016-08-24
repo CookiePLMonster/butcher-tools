@@ -15,6 +15,7 @@ def quatMultiply(q, p):
 firstArg = 1
 StripDebugInfo = False
 IncludeIDEInfo = False
+IncludeSection = False
 
 for arg in sys.argv[1:]:
 	if arg == '-nodebug':
@@ -23,11 +24,17 @@ for arg in sys.argv[1:]:
 	elif arg == '-ideinfo':
 		IncludeIDEInfo = True
 		firstArg += 1
+	elif arg == '-mksection':
+		IncludeSection = True
+		firstArg += 1
 	else:
 		break
 
 instlines = parseIplInst( sys.argv[firstArg+1:] )
 paths = parseIdePath( sys.argv[firstArg] )
+
+if IncludeSection:
+	print 'path'
 
 for id, path in paths.iteritems():
 	if id not in instlines:
@@ -62,3 +69,6 @@ for id, path in paths.iteritems():
 					"{:g}".format(NewPos[0]) + ', ' + "{:g}".format(NewPos[1])  + ', ' + "{:g}".format(NewPos[2]) + ', ' + \
 					"{:g}".format(node.Median) + ', ' + str(node.LeftLanes) + ', ' + str(node.RightLanes) + ', ' + \
 					str(node.SpeedLimit) + ', ' + str(NewFlags) + ', ' + "{:g}".format(node.SpawnRate)
+
+if IncludeSection:
+	print 'end'
