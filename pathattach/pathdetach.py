@@ -15,9 +15,9 @@ for line in fileinput.input(sys.argv[2:]):
 		tokens = line.split(", ")
 		if tokens[0] not in instlines:
 			if len(tokens) == 12:
-				instlines.update( {tokens[0] : ( tokens[1], tokens[2], tokens[3], tokens[4], tokens[8], tokens[9], tokens[10], tokens[11] ) })
+				instlines.update( {tokens[0] : ( tokens[1], float(tokens[2]), float(tokens[3]), float(tokens[4]), float(tokens[8]), float(tokens[9]), float(tokens[10]), float(tokens[11]) ) })
 			elif len(tokens) == 13:
-				instlines.update( {tokens[0] : ( tokens[1], tokens[3], tokens[4], tokens[5], tokens[9], tokens[10], tokens[11], tokens[12] ) })
+				instlines.update( {tokens[0] : ( tokens[1], float(tokens[3]), float(tokens[4]), float(tokens[5]), float(tokens[9]), float(tokens[10]), float(tokens[11]), float(tokens[12]) ) })
 
 	if line == "inst":
 		parse = True
@@ -47,12 +47,21 @@ with open(sys.argv[1]) as f:
 				if tokens[0] == '0':
 					print '\t0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1'
 				else:
-					v = [ float(tokens[3]), float(tokens[4]), float(tokens[5]) ]
-					u = [ -float(curData[4]), -float(curData[5]), -float(curData[6]) ]
-					s = float(curData[7])
-					vprime = 2.0 * np.dot(u, v) * u + (s*s - np.dot(u, u)) * v + 2.0 * s * np.cross(u, v)
-					vprime += [ float(curData[1]) * 16.0, float(curData[2]) * 16.0, float(curData[3]) * 16.0 ]
-					print '\t' + tokens[0] + ', ' + tokens[1] + ', ' + tokens[2] + ', ' + str(vprime[0])  + ', ' + str(vprime[1]) + ', ' + str(vprime[2]) + ', ' + tokens[6] + ', ' + tokens[7] + ', ' + tokens[8] + ', ' + tokens[9] + ', ' + tokens[10] + ', ' + tokens[11]
+					q = [ curData[7], curData[4], curData[5], curData[6] ]
+					qc = [ curData[7], -curData[4], -curData[5], -curData[6] ]
+					p = [ 0.0, float(tokens[3]), float(tokens[4]), float(tokens[5]) ]
+
+					vprime = [ q[0]*p[0] - q[1]*p[1] - q[2]*p[2] - q[3]*p[3], \
+					q[0]*p[1] + q[1]*p[0] + q[2]*p[3] - q[3]*p[2], \
+					q[0]*p[2] + q[2]*p[0] + q[3]*p[1] - q[1]*p[3], \
+					q[0]*p[3] + q[3]*p[0] + q[1]*p[2] - q[2]*p[1] ]
+
+					vprime = [ vprime[0]*qc[0] - vprime[1]*qc[1] - vprime[2]*qc[2] - vprime[3]*qc[3], \
+					vprime[0]*qc[1] + vprime[1]*qc[0] + vprime[2]*qc[3] - vprime[3]*qc[2], \
+					vprime[0]*qc[2] + vprime[2]*qc[0] + vprime[3]*qc[1] - vprime[1]*qc[3], \
+					vprime[0]*qc[3] + vprime[3]*qc[0] + vprime[1]*qc[2] - vprime[2]*qc[1] ]
+
+					print '\t' + tokens[0] + ', ' + tokens[1] + ', ' + tokens[2] + ', ' + str(vprime[1] + curData[1] * 16.0)  + ', ' + str(vprime[2] + curData[2] * 16.0) + ', ' + str(vprime[3] + curData[3] * 16.0) + ', ' + tokens[6] + ', ' + tokens[7] + ', ' + tokens[8] + ', ' + tokens[9] + ', ' + tokens[10] + ', ' + tokens[11]
 
 		if line == "path":
 			parse = True
