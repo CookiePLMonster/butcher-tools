@@ -12,9 +12,22 @@ def quatMultiply(q, p):
 	q[0]*p[2] + q[2]*p[0] + q[3]*p[1] - q[1]*p[3], \
 	q[0]*p[3] + q[3]*p[0] + q[1]*p[2] - q[2]*p[1]
 
+firstArg = 1
+StripDebugInfo = False
+IncludeIDEInfo = False
 
-instlines = parseIplInst( sys.argv[2:] )
-paths = parseIdePath( sys.argv[1] )
+for arg in sys.argv[1:]:
+	if arg == '-nodebug':
+		StripDebugInfo = True
+		firstArg += 1
+	elif arg == '-ideinfo':
+		IncludeIDEInfo = True
+		firstArg += 1
+	else:
+		break
+
+instlines = parseIplInst( sys.argv[firstArg+1:] )
+paths = parseIdePath( sys.argv[firstArg] )
 
 for id, path in paths.iteritems():
 	if id not in instlines:
@@ -23,9 +36,18 @@ for id, path in paths.iteritems():
 
 	for groupId, pathnodes in enumerate(path.NodesByGroup):
 		if pathnodes:
-			for inst in instlines[ path.ModelID ]:
-				print str(groupId) + ', -1 # ' + str(id) + ', ' + path.ModelName
-				for node in pathnodes:
+			for instId, inst in enumerate(instlines[ path.ModelID ]):
+				if StripDebugInfo:
+					print str(groupId) + ', -1 # ' + str(id) + ', ' + path.ModelName
+				else:
+					print str(groupId) + ', -1'
+				for nodeId, node in enumerate(pathnodes):
+					NewFlags = node.Flags
+					if IncludeIDEInfo and nodeId == 0:
+						NewFlags &= 0xF
+						NewFlags |= (id & 0xFFFF) << 4
+						NewFlags |= (instId & 0xFFF) << 20
+
 					NewPos = ()
 					if node.NodeType == 0:
 						NewPos = (0, 0, 0)
@@ -38,5 +60,5 @@ for id, path in paths.iteritems():
 						NewPos = map(lambda x, y: int(x + y*16.0), v[1:], inst.Pos)
 					print '\t' + str(node.NodeType) + ', ' + str(node.NextNode) + ', ' + str(node.IsCrossRoad) + ', ' + \
 					str(NewPos[0]) + ', ' + str(NewPos[1])  + ', ' + str(NewPos[2]) + ', ' + \
-					str(node.Median) + ', ' + str(node.LeftLanes) + ', ' + str(node.RightLanes) + ', ' + \
-					str(node.SpeedLimit) + ', ' + str(node.Flags) + ', ' + str(node.SpawnRate)
+					"{:g}".format(node.Median) + ', ' + str(node.LeftLanes) + ', ' + str(node.RightLanes) + ', ' + \
+					str(node.SpeedLimit) + ', ' + str(NewFlags) + ', ' + "{:g}".format(node.SpawnRate)
