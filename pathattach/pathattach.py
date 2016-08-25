@@ -52,7 +52,7 @@ for id, path in enumerate(paths):
 				continue
 			processed.add( (OrigModel, path.GroupID) )
 
-			print str(path.GroupID)  + '. ' + str(OrigModel) + ', ' + inst.ModelName
+			print str(path.GroupID)  + ', ' + str(OrigModel) + ', ' + inst.ModelName
 			for node in path.Nodes:
 				NewPos = ()
 				if node.NodeType == 0:
