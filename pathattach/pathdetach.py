@@ -63,7 +63,7 @@ for id, path in paths.iteritems():
 						qc = wxyzConjugate(q)
 						p = ( 0.0, ) + node.Pos
 
-						v = quatMultiply(quatMultiply(q, p), qc)
+						v = quatMultiply(quatMultiply(qc, p), q)
 						NewPos = map(lambda x, y: x + y*16.0, v[1:], inst.Pos)
 					print '\t' + str(node.NodeType) + ', ' + str(node.NextNode) + ', ' + str(node.IsCrossRoad) + ', ' + \
 					"{:g}".format(NewPos[0]) + ', ' + "{:g}".format(NewPos[1])  + ', ' + "{:g}".format(NewPos[2]) + ', ' + \
