@@ -63,7 +63,7 @@ for id, path in enumerate(paths):
 					qc = wxyzConjugate(q)
 					p = ( 0.0, ) + tuple(v)
 
-					NewPos = v
+					NewPos = quatMultiply(quatMultiply(q, p), qc) [1:]
 				print '\t' + str(node.NodeType) + ', ' + str(node.NextNode) + ', ' + str(node.IsCrossRoad) + ', ' + \
 				"{:g}".format(NewPos[0]) + ', ' + "{:g}".format(NewPos[1])  + ', ' + "{:g}".format(NewPos[2]) + ', ' + \
 				"{:g}".format(node.Median) + ', ' + str(node.LeftLanes) + ', ' + str(node.RightLanes) + ', ' + \
