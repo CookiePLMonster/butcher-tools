@@ -13,8 +13,7 @@ def parseIplInst( files ):
 	parse = False
 	instlist = {}
 	for line in fileinput.input( files ):
-		line = line.strip()
-		line = line.split('#', 1)[0]
+		line = line.strip().split('#', 1)[0]
 		if line == "end":
 			parse = False
 
@@ -72,8 +71,7 @@ def parseIplPath( files ):
 	parse = False
 	pathlist = []
 	for line in fileinput.input( files ):
-		line = line.strip()
-		line = line.split('#', 1)[0]
+		line = line.strip().split('#', 1)[0]
 		if line == "end":
 			parse = False
 

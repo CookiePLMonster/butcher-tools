@@ -32,8 +32,7 @@ def parseIdePath( files ):
 	curModel = -1
 	curGroup = -1
 	for line in fileinput.input( files ):
-		line = line.strip()
-		line = line.split('#', 1)[0]
+		line = line.strip().split('#', 1)[0]
 		if line == "end":
 			parse = False
 
