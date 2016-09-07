@@ -3,6 +3,10 @@ import copy
 from parseipl import parseIplInst
 from parseide import parseIdePath
 
+def enumerate_reverse(L):
+	for index in reversed(xrange(len(L))):
+	  yield index, L[index]
+
 def wxyzConjugate(q):
 	return q[0], -q[1], -q[2], -q[3]
 
@@ -13,13 +17,13 @@ def quatMultiply(q, p):
 	q[0]*p[3] + q[3]*p[0] + q[1]*p[2] - q[2]*p[1]
 
 firstArg = 1
-StripDebugInfo = False
+AddDebugInfo = False
 IncludeIDEInfo = False
 IncludeSection = False
 
 for arg in sys.argv[1:]:
-	if arg == '-nodebug':
-		StripDebugInfo = True
+	if arg == '-debug':
+		AddDebugInfo = True
 		firstArg += 1
 	elif arg == '-ideinfo':
 		IncludeIDEInfo = True
@@ -41,10 +45,10 @@ for id, path in paths.iteritems():
 		print >> sys.stderr, "Error! File " + path.ModelName + " not found in any parsed IPL!"
 		continue
 
-	for groupId, pathnodes in reversed(list(enumerate(path.NodesByGroup))):
+	for groupId, pathnodes in enumerate_reverse(path.NodesByGroup):
 		if pathnodes:
 			for instId, inst in enumerate(instlines[ path.ModelID ]):
-				if StripDebugInfo:
+				if AddDebugInfo:
 					print str(groupId) + ', -1 # ' + str(id) + ', ' + path.ModelName
 				else:
 					print str(groupId) + ', -1'
