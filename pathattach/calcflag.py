@@ -1,7 +1,7 @@
 import sys
 if len(sys.argv) != 4:
 	print 'calcflag usage:'
-	print 'python calcflag.py [orig_flag] [modelID] [instanceID]'
+	print 'python calcflag.py orig_flag modelID instanceID'
 	quit()
 
 flag = int(sys.argv[1])

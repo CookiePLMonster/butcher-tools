@@ -22,13 +22,13 @@ IncludeIDEInfo = False
 IncludeSection = False
 
 for arg in sys.argv[1:]:
-	if arg == '-debug':
+	if arg == '--debug':
 		AddDebugInfo = True
 		firstArg += 1
-	elif arg == '-ideinfo':
+	elif arg == '--ideinfo':
 		IncludeIDEInfo = True
 		firstArg += 1
-	elif arg == '-mksection':
+	elif arg == '--mksection':
 		IncludeSection = True
 		firstArg += 1
 	else:

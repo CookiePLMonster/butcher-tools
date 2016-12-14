@@ -1,7 +1,6 @@
 import sys
 import copy
-from parseipl import parseIplInst
-from parseipl import parseIplPath
+from parseipl import parseIplInst, parseIplPath
 
 def wxyzConjugate(q):
 	return q[0], -q[1], -q[2], -q[3]
@@ -17,10 +16,10 @@ Verbose = False
 IncludeSection = False
 
 for arg in sys.argv[1:]:
-	if arg == '-verbose':
+	if arg == '--verbose':
 		Verbose = True
 		firstArg += 1
-	elif arg == '-mksection':
+	elif arg == '--mksection':
 		IncludeSection = True
 		firstArg += 1
 	else:
